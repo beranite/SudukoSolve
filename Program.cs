@@ -55,6 +55,19 @@ namespace Suduko
 005310600
 ";
 
+    static string sudokoWorst =
+@"
+800000000
+003600000
+070090200
+050007000
+000045700
+000100030
+001000068
+008500010
+090000400
+";
+
     static void Main(string[] args)
     {
       Console.WriteLine("Hello World!");
@@ -64,7 +77,7 @@ namespace Suduko
           Console.WriteLine(h.Dump());
           Console.WriteLine(CellListElement.CountOfSolve);
         }, 9);
-      ReadStringToMatrix(sudokoEvil2, 9,head.SetCell);
+      ReadStringToMatrix(sudokoWorst, 9,head.SetCell);
       
       Console.WriteLine(" ");
       head.Solve();

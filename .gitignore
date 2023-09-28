@@ -16,7 +16,13 @@ DeploymentReport*.txt
 */**/bin/Release
 */**/obj/Debug
 */**/obj/Release
+**/bin/Debug
+**/bin/Release
+**/obj
+**/obj/Debug
+**/obj/Release
 */**/.vs
+**/.vs
 */**/obj/*.csproj.*
 */**/obj/*
 *.manifest
