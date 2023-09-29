@@ -40,7 +40,7 @@ namespace Suduko
       int number = cell.Value.Value;
       if (values.Contains(number))
       {
-        throw new InvalidOperationException("{number} is already used");
+        throw new CellListElementException("{number} is already used");
       }
       values.Add(number);
       allValues.Remove(number);

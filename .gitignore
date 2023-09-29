@@ -21,8 +21,9 @@ DeploymentReport*.txt
 **/obj
 **/obj/Debug
 **/obj/Release
-*/**/.vs
 **/.vs
+*/**/.vs
+u**/.vs
 */**/obj/*.csproj.*
 */**/obj/*
 *.manifest

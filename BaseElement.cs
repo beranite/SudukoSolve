@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Suduko
 {
@@ -14,6 +15,7 @@ namespace Suduko
     protected readonly Func<int, int, Cell> fetchCell;
     public int Entries { get; }
     protected List<C> elements = new List<C>();
+    public List<C> Elements { get { return elements.ToList<C>(); } }
     protected int rows;
     protected int columns;
     

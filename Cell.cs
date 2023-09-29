@@ -1,15 +1,68 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
+using System.Threading.Tasks.Sources;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Suduko
 {
+  public class CellSet
+  {
+    public int RowNo { get; }
+    public int ColumnNo { get; }
+    public int CellValue { get; }
+
+    public CellSet(int rowNo, int columnNo, int cellValue)
+    {
+      this.RowNo = rowNo;
+      this.ColumnNo = columnNo;
+      this.CellValue = cellValue;
+    }
+
+    public override string ToString()
+    {
+      return $"({RowNo},{ColumnNo}) - {CellValue}";
+    }
+  }
+
+  public class CellValue : BaseCell, IComparable<CellValue>
+  {
+    public int? Value { get; private set; }
+    public List<int> AllowedValues = new List<int>();
+
+    public CellValue(int rowNo, int columnNo, int? value, List<int> allowedValues) : base(rowNo, columnNo)
+    {
+      this.Value = value;
+      this.AllowedValues = allowedValues.ToList();
+    }
+
+    public int CompareTo([AllowNull] CellValue other)
+    {
+      if (other.AllowedValues.Count == AllowedValues.Count)
+      {
+        return 0;
+      }
+      return (other.AllowedValues.Count < AllowedValues.Count) ? 1 : -1;
+    }
+    public string AllowedValuesImage()
+    {
+      string s = "";
+      foreach (var entry in AllowedValues)
+      {
+        s += entry.ToString();
+      }
+      return s;
+    }
+    public override string ToString()
+    {
+      return $"({Id}) - {this.Value} - {AllowedValuesImage()}";
+    }
+  }
+
   public class Cell : BaseCell
   {
     public int? Value { get; private set; }
-
-
-     List<int> allowedValues = new List<int>();
+    List<int> allowedValues = new List<int>();
 
     public List<int> AllowedValues
     {
@@ -17,6 +70,17 @@ namespace Suduko
       {
         return allowedValues.ToList();
       }
+    }
+
+    public CellValue Copy()
+    {
+      return new CellValue(this.ExternalRowNo(), this.ExternalColumnNo(), this.Value, this.AllowedValues);
+    }
+
+    public void ResetValue(CellValue cv)
+    {
+      this.Value = cv.Value;
+      this.allowedValues = cv.AllowedValues.ToList(); 
     }
 
     public string AllowedValuesImage()
@@ -67,6 +131,16 @@ namespace Suduko
       return false;
     }
 
+    public int ExternalRowNo()
+    {
+      return (Parent.RowNo-1) * 3 + this.RowNo;
+    }
+
+    public int ExternalColumnNo()
+    {
+      return (Parent.ColumnNo-1) * 3 + this.ColumnNo;
+    }
+
     public bool RemoveAllowedValues(IEnumerable<int> suggestedValues)
     {
       if (suggestedValues is null)
@@ -92,6 +166,8 @@ namespace Suduko
           this.SetValue(allowedValues.FirstOrDefault<int>());
         }
       }
+      if (allowedValues.Count == 0) 
+        throw new CellListElementException(nameof(allowedValues));
       return found;
     }
 

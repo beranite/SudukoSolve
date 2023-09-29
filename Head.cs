@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Suduko
 {
@@ -9,7 +10,7 @@ namespace Suduko
 
     public List<RowElement> rows = new List<RowElement>();
     public List<ColumnElement> columns = new List<ColumnElement>();
-
+    
     Action<Head,string> action;
 
     public Head(ElementShape shape, Action<Head,string> action, int topValue = 9) 
@@ -19,10 +20,11 @@ namespace Suduko
       this.AddRowsAndColumns();
     }
 
-    public void Solve()
-    {
-      
+    public List<CellValue> CellValueList { get; private set; }
+    public List<Cell> AllCells { get; set; } = new List<Cell>();
 
+    public bool Solve()
+    {      
       bool change;
       do
       {
@@ -30,6 +32,13 @@ namespace Suduko
 
       }
       while (change);
+
+      CellValueList = (from x in topElement.Elements
+                      from y in x.Cells
+                      where y.AllowedValues.Count > 1
+                      select y.Copy()).ToList();
+      CellValueList.Sort();
+      return topElement.Solved;
     }
 
     public bool DoResolve()
@@ -63,6 +72,10 @@ namespace Suduko
       {
         rows.Add(new RowElement(topElement.FetchCell, i, topElement.Entries));
         columns.Add(new ColumnElement(topElement.FetchCell, i, topElement.Entries));
+        for (int j = 1;j<=topElement.Entries;j++)
+        {
+          AllCells.Add(topElement.FetchCell(i, j));
+        }
       }
     }
 

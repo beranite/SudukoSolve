@@ -68,48 +68,55 @@ namespace Suduko
 090000400
 ";
 
+    static string sudokoWorst2 =
+@"
+005300000
+800000020
+070010500
+400005300
+010070006
+003200080
+060500009
+004000030
+000009700
+";
+
+    static string sudokoWorstSolved =
+@"
+812753649
+943682175
+675491283
+154237896
+369845721
+287169534
+521974368
+438526917
+796318452";
+
     static void Main(string[] args)
     {
-      Console.WriteLine("Hello World!");
-      var head = new Head(ElementShape.Rectangle, 
-        (h,t) => { 
-          Console.WriteLine(t);  
-          Console.WriteLine(h.Dump());
+
+      string lastDump = "";
+      var masterSolver = new MasterSolver(sudokoWorst, ElementShape.Rectangle,
+        (h, t) =>
+        {
+          Console.WriteLine(t);
+          var curDump = (h != null) ? h.Dump() : null;
+          if (h != null && (curDump != lastDump))
+          {             
+            Console.WriteLine(h.Dump());
+          }
+          lastDump = curDump;
           Console.WriteLine(CellListElement.CountOfSolve);
         }, 9);
-      ReadStringToMatrix(sudokoWorst, 9,head.SetCell);
-      
-      Console.WriteLine(" ");
-      head.Solve();
+      var head = masterSolver.Solve();
+
       var dump = head.Dump();
       Console.WriteLine(head.Dump());
+     
+      
 
     }
 
-    static void ReadStringToMatrix(string sudoko, int topValue, Action<int,int,int> setCell)
-    {
-      int row = 1;
-      int column = 1;
-      using (var sr = new StringReader(sudoko))
-      {
-        int next;
-        while (sr.Read()> 0)
-        {
-          next = sr.Peek();
-          if (next >= 48 && next < 58)
-          {
-            var number = next - 48;
-            setCell(row, column, number);
-            column++;
-            if (column > 9)
-            {
-              column = 1;
-              row++;
-            }
-          }
-        }
-        
-      }
-    }
-  }
+ }
 }
