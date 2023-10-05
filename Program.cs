@@ -1,9 +1,10 @@
 ﻿using System;
 using System.IO;
+using Suduko.MasterSolver;
 
 namespace Suduko
 {
-  class Program
+    class Program
   {
     static string sudokoMed =
 @"
@@ -95,9 +96,10 @@ namespace Suduko
 
     static void Main(string[] args)
     {
+      SudokuSolver.Solve();
 
       string lastDump = "";
-      var masterSolver = new MasterSolver(sudokoWorst, ElementShape.Rectangle,
+      var masterSolver = new Suduko.MasterSolver.MasterSolver(sudokoWorst, ElementShape.Rectangle,
         (h, t) =>
         {
           Console.WriteLine(t);
@@ -112,11 +114,7 @@ namespace Suduko
       var head = masterSolver.Solve();
 
       var dump = head.Dump();
-      Console.WriteLine(head.Dump());
-     
-      
-
-    }
-
+      Console.WriteLine(head.Dump());          
+    }    
  }
 }

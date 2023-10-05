@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Collections.Generic;
 
-namespace Suduko
+namespace Suduko.MasterSolver
 {
   public abstract class CellListElement : BaseElement<Cell>
   {

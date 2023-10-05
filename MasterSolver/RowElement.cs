@@ -1,18 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Suduko
+namespace Suduko.MasterSolver
 {
 
-  public class ColumnElement : CellListElement
+    public class RowElement : CellListElement
   {
-    
-    public int Column { get; }
 
-    public ColumnElement(Func<int, int, Cell> fetchCell, int column, int topValue = 9) : 
-      base(ElementShape.Column, fetchCell, 1, column, topValue: 9)
-    {
-      Column = column;
+    public int Row { get; }
+
+    public RowElement(Func<int,int,Cell> fetchCell, int row, int topValue = 9) : 
+      base(ElementShape.Row, fetchCell, row, 1, topValue)
+    {      
+      Row = row;
     }
 
    
@@ -23,16 +23,14 @@ namespace Suduko
 
     protected override int InternalRow(int row, int column)
     {
-    
-      return row;
+      if (row != Row)
+        throw new InvalidOperationException($"Wrong row {row}. Should be {Row}");
+      return Row;
     }
 
     protected override int InternalColumn(int row, int column)
     {
-      if (column != Column)
-        throw new InvalidOperationException($"Wrong row {column}. Should be {Column}");
-
-      return column - 1;
+      return column;
     }
 
     protected override Cell AddElement(int rowNo, int columnNo, int topValue = 9)
@@ -40,7 +38,7 @@ namespace Suduko
       return fetchCell(rowNo, columnNo);
     }
 
-    protected override int ExternalRow(int row)
+    protected override int ExternalRow(int column)
     {
       throw new NotImplementedException();
     }

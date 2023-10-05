@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Linq;
 using System.Text;
+using Suduko.MasterSolver;
 
-namespace Suduko
+namespace Suduko.MasterSolver
 {
 
-  public class TopElement : BaseElement<CellElement>
+    public class TopElement : BaseElement<CellElement>
   {
 
     public bool Solved { get; private set; } = false;

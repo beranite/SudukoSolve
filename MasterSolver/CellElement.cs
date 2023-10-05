@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace Suduko
+namespace Suduko.MasterSolver
 {
   public class CellElement : CellListElement
   {

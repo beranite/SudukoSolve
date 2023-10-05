@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
-using System.Threading.Tasks.Sources;
 using System.Diagnostics.CodeAnalysis;
 
-namespace Suduko
+namespace Suduko.MasterSolver
 {
   public class CellSet
   {
@@ -59,11 +58,21 @@ namespace Suduko
     }
   }
 
+  /// <summary>
+  /// Represents a cell in a grid.
+  /// </summary>
   public class Cell : BaseCell
   {
+    /// <summary>
+    /// The value of the cell.
+    /// </summary>
     public int? Value { get; private set; }
-    List<int> allowedValues = new List<int>();
 
+    private List<int> allowedValues = new List<int>();
+
+    /// <summary>
+    /// Gets the list of allowed values for the cell.
+    /// </summary>
     public List<int> AllowedValues
     {
       get
@@ -72,17 +81,26 @@ namespace Suduko
       }
     }
 
+    /// <summary>
+    /// Creates a copy of the current cell value.
+    /// </summary>
     public CellValue Copy()
     {
       return new CellValue(this.ExternalRowNo(), this.ExternalColumnNo(), this.Value, this.AllowedValues);
     }
 
+    /// <summary>
+    /// Resets the cell value.
+    /// </summary>
     public void ResetValue(CellValue cv)
     {
       this.Value = cv.Value;
-      this.allowedValues = cv.AllowedValues.ToList(); 
+      this.allowedValues = cv.AllowedValues.ToList();
     }
 
+    /// <summary>
+    /// Returns a string representation of the allowed values.
+    /// </summary>
     public string AllowedValuesImage()
     {
       string s = "";
@@ -93,13 +111,22 @@ namespace Suduko
       return s;
     }
 
+    /// <summary>
+    /// The parent cell.
+    /// </summary>
     public ICell Parent { get; }
 
+    /// <summary>
+    /// Checks if a value is allowed in the cell.
+    /// </summary>
     public bool PeekAllowed(int value)
     {
       return allowedValues.Contains(value);
     }
 
+    /// <summary>
+    /// Checks if both values are allowed in the cell.
+    /// </summary>
     public bool HasBoth(int first, int second)
     {
       if (this.Value.HasValue)
@@ -107,9 +134,12 @@ namespace Suduko
       return (this.PeekAllowed(first) && this.PeekAllowed(second));
     }
 
+    /// <summary>
+    /// Initializes a new instance of the Cell class.
+    /// </summary>
     public Cell(ICell parent, int rowNo, int columnNo, int topValue = 9) : base(rowNo, columnNo)
     {
-      for (int i=1;i<=topValue;i++)
+      for (int i = 1; i <= topValue; i++)
       {
         allowedValues.Add(i);
       }
@@ -117,8 +147,19 @@ namespace Suduko
       Parent = parent;
     }
 
+    /// <summary>
+    /// Delegate for handling cell changes.
+    /// </summary>
     public delegate void CellChange(Cell cell);
+
+    /// <summary>
+    /// Event that occurs when the cell value is set.
+    /// </summary>
     public event CellChange ValueSet;
+
+    /// <summary>
+    /// Sets the value of the cell.
+    /// </summary>
     public bool SetValue(int suggestedValue)
     {
       if (allowedValues.Contains(suggestedValue))
@@ -131,16 +172,25 @@ namespace Suduko
       return false;
     }
 
+    /// <summary>
+    /// Returns the external row number of the cell.
+    /// </summary>
     public int ExternalRowNo()
     {
-      return (Parent.RowNo-1) * 3 + this.RowNo;
+      return (Parent.RowNo - 1) * 3 + this.RowNo;
     }
 
+    /// <summary>
+    /// Returns the external column number of the cell.
+    /// </summary>
     public int ExternalColumnNo()
     {
-      return (Parent.ColumnNo-1) * 3 + this.ColumnNo;
+      return (Parent.ColumnNo - 1) * 3 + this.ColumnNo;
     }
 
+    /// <summary>
+    /// Removes the specified values from the list of allowed values.
+    /// </summary>
     public bool RemoveAllowedValues(IEnumerable<int> suggestedValues)
     {
       if (suggestedValues is null)
@@ -166,11 +216,14 @@ namespace Suduko
           this.SetValue(allowedValues.FirstOrDefault<int>());
         }
       }
-      if (allowedValues.Count == 0) 
+      if (allowedValues.Count == 0)
         throw new CellListElementException(nameof(allowedValues));
       return found;
     }
 
+    /// <summary>
+    /// Removes all values from the list of allowed values except the specified ones.
+    /// </summary>
     public bool RemoveAllowedButValues(IEnumerable<int> suggestedValues)
     {
       if (suggestedValues is null)
@@ -199,12 +252,17 @@ namespace Suduko
       return found;
     }
 
+    /// <summary>
+    /// Returns a string that represents the current cell.
+    /// </summary>
     public override string ToString()
     {
-
       return $"({Id}) - {this.Value} - {AllowedValuesImage()}";
     }
 
+    /// <summary>
+    /// Calculates the ID of the cell.
+    /// </summary>
     public override string CalculateId()
     {
       var id = $"({RowNo},{ColumnNo})";
